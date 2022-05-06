@@ -1,76 +1,67 @@
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
 
-// this version compute the total optimal weight
-public class WgtIntSchedulerV1 {
- 
-    // A job object has id, start time, finish time and weight.
-    static class Job {
-        int id, start, finish, weight;
-        Job(int id, int s, int f, int w)
-        {
-            this.id = id;
-            this.start = s;
-            this.finish = f;
-            this.weight = w;
-        }
-    }
- 
-    // Find the latest job (in sorted array) that doesn't
-    // conflict with the job[i]. If there is no compatible
-    // job, then it returns -1.
-    static int latestNonConflict(Job arr[], int i)
-    {
-        for (int j = i - 1; j >= 0; j--) {
-            // finish before next is started
-            if (arr[j].finish <= arr[i - 1].start){
-                System.out.println("latestNonConflict for " + i + ": " + j);
-                return j;
-            }
-        }
-        return -1;
-    }
- 
-    static int findMaxWeightDP(Job arr[])
-    {
-        int n = arr.length;
-        // Create an array to store solutions of
-        // subproblems.  table[i] stores the weight for jobs
-        // till arr[i] (including arr[i])
-        int[] table = new int[n];
-        table[0] = arr[0].weight;
- 
-        // Fill entries in M[] using recursive property
-        for (int i = 1; i < n; i++) {
-            // Find weight including the current job
-            int inclProf = arr[i].weight;
-            int l = latestNonConflict(arr, i);
-            if (l != -1)
-                inclProf += table[l];
- 
-            // Store maximum of including and excluding
-            table[i] = Math.max(inclProf, table[i - 1]);
-        }
-        System.out.print("table:");
-        System.out.println(Arrays.toString(table));
-        
-        // Store result and free dynamic memory allocated
-        // for table[]
-        int result = table[n - 1];
- 
-        return result;
-    }
- 
-    
-    public static int[] getOptSet (int[] stime, int[] ftime, int[] weight)
-    {
-        return null;
-    }
-    
-    public static int getOptWeight(int[] stime, int[] ftime, int[] weight)
-    {
-        Job jobs[] = sortJobs(stime, ftime, weight);
-        return findMaxWeightDP(jobs);
-    }
+// define Job class
+class Job
+{
+	int id, start, finish, weight;
+
+	Job(int id, int s, int f, int w)
+	{
+	    this.id = id;
+		this.start = s;
+		this.finish = f;
+		this.weight = w;
+	}
+}
+
+// This version computer the optimal weight
+public class WgtIntSchedulerV1 
+{
+	// Find the index of the last job which doesn't conflict with job n.
+	public static int findLastNonConflictingJob(Job jobs[], int n)
+	{
+		// find the last job index whose finish time <= job n's start time
+		for (int i = n - 1; i >= 0; i--)
+		{
+			if (jobs[i].finish <= jobs[n].start) {
+				//System.out.println("findLastNonConflictingJob:" + i);
+				//System.out.println("in set: job" + jobs[i].id);
+				return i;
+			}
+		}
+
+		// no non-conflicting job is found
+		return -1;
+	}
+
+	// Recursive function to find the max Weight subset of non-conflictingjobs
+	public static int findMaxWeight(Job jobs[], int n)
+	{
+		// base case
+		if (n < 0) {
+			return 0;
+		}
+
+		// return if only one item is remaining
+		if (n == 0) {
+			return jobs[0].weight;
+		}
+
+		// find the index of the last non-conflicting job 
+		int index = findLastNonConflictingJob(jobs, n);
+		
+		
+
+		// include the current job and recur for non-conflicting jobs `[0, index]`
+		int include = jobs[n].weight + findMaxWeight(jobs, index);
+
+		// exclude the current job and recur for remaining items `[0, n-1]`
+		int exclude = findMaxWeight(jobs, n - 1);
+
+		// return the maximum Weight by including or excluding the current job
+		return Math.max(include, exclude);
+	}
     
     static Job[] sortJobs(int[] s, int[] f, int[] w)
     {
@@ -104,14 +95,32 @@ public class WgtIntSchedulerV1 {
         return jobs;
     }
     
-    // main program
-    public static void main(String args[])
+    static int[] getOptSet (int[] stime, int[] ftime, int[] weight)
     {
-        int s[] = {4, 3, 2, 10, 7}; // start times for jobs 1, 2, 3, 4, 5
+        return null;
+    }
+
+    static int getOptWeight(int[] stime, int[] ftime, int[] weight)
+    {
+        Job jobs[] = sortJobs(stime, ftime, weight);
+        return findMaxWeight(jobs, jobs.length - 1);
+    }
+
+	public static void main(String[] args)
+	{
+	    //int s[] = {3,3,1,10,8}; // start times for jobs 1, 2, 3, 4, 5
+        //int f[] = {7,10,4,13,11}; // finish times for jobs 1, 2, 3, 4, 5
+        //int w[] = {6,9,5,8,10}; // weights for jobs 1, 2, 3, 4, 5
+        
+		int s[] = {4, 3, 2, 10, 7}; // start times for jobs 1, 2, 3, 4, 5
         int f[] = {7, 10, 6, 13, 9}; // finish times for jobs 1, 2, 3, 4, 5
         int w[] = {6, 6, 5, 2, 8}; // weights for jobs 1, 2, 3, 4, 5
         
+        //int s[] = {3,1,6,2}; 
+        //int f[] = {10,2,19,100}; 
+        //int w[] = {20,50,100,200}; 
+        
         System.out.println("The optimal weight is "+ getOptWeight(s, f, w));
-    }
 
+	}
 }
