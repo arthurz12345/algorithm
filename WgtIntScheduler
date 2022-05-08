@@ -133,13 +133,6 @@ public class WgtIntScheduler
         return result;
     }
 
-    public static int getOptWeight(int[] stime, int[] ftime, int[] weight)
-    {
-        Job jobs[] = sortJobs(stime, ftime, weight);
-        WeightandJobs wj = findMaxWeight(jobs, jobs.length - 1);
-        return wj.combinedweight;
-    }
-
 	public static void main(String[] args)
 	{
 	    //int s[] = {3,3,1,10,8}; // start times for jobs 1, 2, 3, 4, 5
