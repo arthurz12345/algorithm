@@ -1,0 +1,46 @@
+public class MinimumCostCornerToCorner
+{
+    // Naive recursive function to find the minimum cost to reach
+    // cell (m, n) from cell (0, 0)
+    public static int findMinCost(int[][] cost, int m, int n)
+    {
+        // base case
+        if (n == 0 || m == 0) {
+            return Integer.MAX_VALUE;
+        }
+ 
+        // if we are in the first cell (0, 0)
+        if (m == 1 && n == 1) {
+            return cost[0][0];
+        }
+ 
+        // include the current cell's cost in the path and recur to find the minimum
+        // of the path from the adjacent left cell and adjacent top cell.
+        return Integer.min(findMinCost(cost, m - 1, n), findMinCost(cost, m, n - 1))
+                + cost[m - 1][n - 1];
+    }
+ 
+    public static int MinimumCostCornerToCorner(int[][] cost)
+    {
+        // base case
+        if (cost == null || cost.length == 0) {
+            return 0;
+        }
+ 
+        return findMinCost(cost, cost.length, cost[0].length);
+    }
+ 
+    public static void main(String[] args)
+    {
+        int[][] cost =
+        {
+            { 4, 7, 8, 6, 4 },
+            { 6, 7, 3, 9, 2 },
+            { 3, 8, 1, 2, 4 },
+            { 7, 1, 7, 3, 7 },
+            { 2, 9, 8, 9, 3 }
+        };
+ 
+        System.out.println("The minimum cost is " + MinimumCostCornerToCorner(cost));
+    }
+}
