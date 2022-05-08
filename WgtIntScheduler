@@ -21,7 +21,7 @@ class WeightedJobs
 	int combinedWeight;
 }
 
-//for optimal set
+//for optimal set, but calculation is done in a loop, not recursion
 public class WgtIntScheduler 
 {
 
