@@ -1,0 +1,60 @@
+
+import java.lang.Math;
+import java.util.*;
+
+public class KnapsackWithRepeats
+{
+     
+    // Returns the maximum value for knapsack of W capacity
+    private static int getMaxValue(int W,  int[] val, int[] wt)
+    {
+        
+        int n = val.length;
+        // dp[i] holds maximum value with knapsack capacity i.
+        int dp[] = new int[W + 1];
+        
+        // this list holds all the items in the knapsack
+        ArrayList<Integer> items = new ArrayList<Integer>();
+         
+        // Fill dp[] with recursive formula
+        for(int i = 0; i <= W; i++){
+            for(int j = 0; j < n; j++){
+                System.out.println("i: " + i);
+                    System.out.println("j: " + j);
+                    System.out.println("dp[i]: " + dp[i]);
+                    System.out.println("wt[j]: " + wt[j]);
+                    System.out.println("val[j]: " + val[j]);
+                    //System.out.println("dp[i - wt[j]]: " + dp[i - wt[j]]);
+                    System.out.println("");
+                if(wt[j] <= i){
+                    dp[i] = Math.max(dp[i], dp[i - wt[j]] + val[j]);
+                    
+                    if (dp[i - wt[j]] + val[j] > dp[i])
+                        items.add(j);
+                }
+            }
+        }
+        for(int i = 0; i < items.size(); i++){
+            System.out.println("items[" + i +"]: " + items.get(i));
+        }
+        
+        for(int i = 0; i <= W; i++){
+             System.out.println("dp[" + i +"]: " + dp[i]);
+        }
+        
+        return dp[W];
+    }
+ 
+    public static void main(String[] args)
+    {
+        //int W = 100;
+        //int val[] = {10, 40, 20};
+        //int wt[] = {5, 15, 30};
+        
+        int W = 10;
+        int val[]  = {2, 3};
+        int wt[] = {3, 5};
+
+        System.out.println(getMaxValue(W, val, wt));
+    }
+}
