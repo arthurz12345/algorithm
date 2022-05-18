@@ -1,0 +1,154 @@
+
+import java.lang.Math;
+import java.util.ArrayList; 
+
+public class EditDistance {
+    public static void main(String args[]) {
+
+		String str1="AACAGTTACC";
+		String str2="TAAGGTCA";
+		//String str1="AAT";
+		//String str2="AAC";
+		//String str1="CAAT";
+		//String str2="CCAA";
+		//String str1="TCAT";
+		//String str2="GCA";
+		//String str1="AACAGTTACC";
+		//String str2="AACAGCACC";
+		//String str1="AACAGTTACC";
+		//String str2="AACAGTTAAA";
+		//String str1="AACAGTTACC";
+		//String str2="TTCAGTTAAA";
+
+		System.out.println("Edit Distance:" + GetEditDistance(str1, str2));
+    }
+    
+	static int GetEditDistance(String str1, String str2)
+    {
+        //Time Complexity: O(m * n). Auxiliary Space: O(m * n)
+        int m = str1.length();
+        int n = str2.length();
+        
+        // Create a table to store results of sub-problems
+        int dp[][] = new int[m+1][n+1];
+      
+        // Fill first row and column
+        dp[0][0] = 0;
+        for (int i=1; i<=m; i++)
+        {
+             dp[i][0] = i * 2;
+        }
+        for (int j=1; j<=n; j++)
+        {
+             dp[0][j] = j * 2;
+        }
+        
+        // Fill the rest of the table in bottom up manner
+        for (int i=1; i<=m; i++)
+        {
+            for (int j=1; j<=n; j++)
+            {
+
+                    boolean  isMatch = false;
+                    if(str1.charAt(i-1) == str2.charAt(j-1))
+                        isMatch = true;
+                    
+                    int matchOrNot = dp[i-1][j-1]; // match
+                    if (!isMatch)
+                        matchOrNot += 1; // mismatch
+                        
+                    dp[i][j] = minOfThree(matchOrNot, 
+                                       dp[i-1][j] + 2,  // gap
+                                       dp[i][j-1] + 2); // gap
+                
+            }
+        }
+
+        
+        System.out.print("       ");
+        for (int i = 0; i<n; i++) {
+            System.out.print(str2.charAt(i) + "   ");
+        }
+        System.out.println();
+            
+        for (int i = 0; i<=m; i++) {
+            if (i > 0)
+                System.out.print(str1.charAt(i-1) + "  ");
+            
+            if (i == 0)
+                 System.out.print("   ");
+                 
+            for (int j = 0; j<=n; j++) {
+                System.out.print(dp[i][j] + "   ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+        
+        ArrayList<String> transcripts = new ArrayList<String>();
+        ArrayList<String> string1 = new ArrayList<String>();
+        ArrayList<String> string2 = new ArrayList<String>();
+        int p1 = m;
+        int p2 = n;
+        while(p1 > 0 || p2 >0) {
+            
+            System.out.println(dp[p1-1][p2-1] + " " + dp[p1-1][p2] + " " + dp[p1][p2-1]);
+            if (dp[p1-1][p2-1] == dp[p1][p2])
+            {
+                System.out.println("000");
+                transcripts.add("0"); //match
+                string1.add(String.valueOf(str1.charAt(p1-1)));
+                string2.add(String.valueOf(str2.charAt(p2-1)));
+                if (p1 > 0)
+                    p1 = p1 - 1;
+                if (p2 > 0)
+                    p2 = p2 - 1;
+            }
+            else if (dp[p1-1][p2-1] <= dp[p1-1][p2] && dp[p1-1][p2-1] <= dp[p1][p2-1])
+            {
+                System.out.println("111");
+                if (dp[p1-1][p2-1] == dp[p1][p2])
+                    transcripts.add("0"); //match
+                else
+                    transcripts.add("1"); // mismatch
+                    
+                string1.add(String.valueOf(str1.charAt(p1-1)));
+                string2.add(String.valueOf(str2.charAt(p2-1)));
+                if (p1 > 0)
+                    p1 = p1 - 1;
+                if (p2 > 0)
+                    p2 = p2 - 1;
+            }
+            else if (dp[p1-1][p2] < dp[p1-1][p2-1] && dp[p1-1][p2] < dp[p1][p2-1])
+            {
+                System.out.println("222");
+                transcripts.add("2");
+                string1.add(String.valueOf(str1.charAt(p1-1)));
+                string2.add("-");
+                if (p1 > 0)
+                    p1 = p1 - 1;
+            }
+            else if (dp[p1][p2-1] < dp[p1-1][p2-1] && dp[p1][p2-1] < dp[p1-1][p2])
+            {
+                System.out.println("333");
+                transcripts.add("2");
+                string1.add("-");
+                string2.add(String.valueOf(str2.charAt(p2-1)));
+                if (p2 > 0)
+                    p2 = p2 - 1;
+            }
+        }
+        System.out.println("transcripts.size:" + transcripts.size());
+        for (int i = transcripts.size() - 1; i >= 0 ; i--){
+            System.out.println(string1.get(i) + " " + string2.get(i) + " " + transcripts.get(i));
+        }
+
+
+        return dp[m][n];
+    }
+    private static int minOfThree(int x, int y, int z){
+		if (x<y && x<z) return x;
+        if (y<x && y<z) return y;
+        else return z;
+	}
+}
