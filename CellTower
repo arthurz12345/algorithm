@@ -1,0 +1,43 @@
+
+import java.util.ArrayList;
+import java.lang.Math;
+
+public class CellTower {
+    public static void main(String args[]) {
+      int range = 4; // tower coverage range radius
+      int arr[] = {1, 3, 5, 6, 8, 11, 15, 17, 22, 24, 28, 33, 34, 45}; // house positions
+      ArrayList<Integer> towers = cellTowerPlacement(arr, range);
+      
+      System.out.println("Towers:");
+      for(int t:towers) {
+            System.out.println(t);
+        }
+    }
+    
+    public static ArrayList<Integer> cellTowerPlacement(int[] M, int R) {
+        ArrayList<Integer> towers = new ArrayList<Integer>();
+        
+       // Sort array M in ascending order
+
+        // add first tower
+        int p = M[0] + R;
+        towers.add(p);
+        System.out.println("House #0: " + M[0]);
+        System.out.println("Add tower #0 at : " + p);
+        
+        for (int i = 1; i< M.length; i++){
+            System.out.print("House #" + i + ": " + M[i]);
+            // greedy - place tower as far down the road as possible
+            if (Math.abs(M[i] - p) > R) {
+                //house not in rage,add a new tower
+                p = M[i] + R;
+                towers.add(p);
+                
+                System.out.println(" not in range. New tower added at " + p);
+            } else {
+                System.out.println(" already in range. No tower added.");
+            }
+        }
+        return towers;
+    }
+}
